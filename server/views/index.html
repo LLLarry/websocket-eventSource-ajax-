@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>首页</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      .card {
+        width: 500px;
+        height: 300px;
+        border-radius: 8px;
+        background-color: pink;
+        padding: 15px;
+        margin: 30px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="card"></div>
+    </div>
+    <script>
+      function ajax(options) {
+        return new Promise((resolve, reject) => {
+          const method = options.method || "GET";
+          let url = options.url;
+          url += `?${stringify(options.params)}`;
+          const xhr = new XMLHttpRequest();
+          xhr.open(method, url, true);
+          xhr.send(options.data || null);
+          xhr.onreadystatechange = () => {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              resolve(xhr.response);
+            }
+          };
+        });
+      }
+
+      function stringify(obj) {
+        if (typeof obj !== "object" || obj === null) return "";
+        return Object.entries(obj)
+          .reduce((acc, [key, value]) => {
+            acc.push(`${key}=${value}`);
+            return acc;
+          }, [])
+          .join("&");
+      }
+
+      // 开启轮询请求
+      // setInterval(() => {
+      //   ajax({
+      //     url: "/lunxun",
+      //   }).then((res) => {
+      //     console.log(res);
+      //   });
+      // }, 2000);
+    </script>
+
+    <script>
+      // 创建连接
+      var socket = new WebSocket("ws://localhost:3000/socket/test");
+      socket.onopen = function (e) {
+        console.log("您已连接成功");
+      };
+      // 监听服务端返回的数据
+      socket.onmessage = function (e) {
+        console.log(e);
+      };
+      // 定时发送
+      // setInterval(() => {
+      //   socket.send("心跳数据：" + Date.now());
+      // }, 500);
+    </script>
+
+    <script>
+      const es = new EventSource("/eventSource");
+      es.onmessage = function (e) {
+        console.log(e);
+      };
+    </script>
+  </body>
+</html>
